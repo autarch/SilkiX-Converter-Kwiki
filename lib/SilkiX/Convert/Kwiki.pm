@@ -622,3 +622,95 @@ sub _debug {
 }
 
 1;
+
+# ABSTRACT: Convert a Kwiki wiki to a Silki wiki
+
+__END__
+
+=pod
+
+=head1 SYNOPSIS
+
+  kwiki2silki --wiki           'Silki Wiki Title'   \
+              --kwiki-root     /path/to/kwiki       \
+              --user-map-file  /path/to/map.json    \
+              --default-user   DefaultNameFromKwiki
+
+  SILKIX_CONVERTER=MyCustomConversionSubclass \
+    kwiki2silki --wiki           'Silki Wiki Title'   \
+                --kwiki-root     /path/to/kwiki       \
+                --user-map-file  /path/to/map.json    \
+                --default-user   DefaultNameFromKwiki
+
+=head1 DESCRIPTION
+
+This module lets you convert a Kwiki wiki into a Silki wiki. The primary
+interface is via the F<kwiki2silki> script that ships with this distribution.
+
+If you define a C<SILKIX_CONVERTER> environment variable, then this class will
+be used to do the conversion. This lets you create a custom subclass, which
+can be useful, especially when it comes to default values for users and for
+mapping page titles from Kwiki to Silki.
+
+=head1 USER MAP FILE
+
+By default, the converter does a dumb mapping of kwiki usernames to Silki
+users. The email address is C<$kwiki_user@localhost.localdomain>.
+
+If you want to make useful accounts for users, you can create a user map JSON
+file.
+
+This should be a JSON object (aka hash) where the keys are Kwiki
+usernames. The values can either be an object describing the user for Silki,
+or another key name. If it is another key name, then the converter follows the
+references until it finds an object or ten links have been followed, at which
+point it blows up.
+
+The Silki user object in the user map can have the following keys:
+
+=over 4
+
+=item * email_address
+
+=item * password
+
+Defaults to "change me".
+
+=item * display_name
+
+The name used by Silki to display the user. This can be empty.
+
+=item * time_zone
+
+Must be an Olson time zone. Defaults to "America/New_York".
+
+=item * is_disabled
+
+A boolean which defaults to false.
+
+=back
+
+=head1 CONVERTING TITLES
+
+By default, titles are converted by splitting StudlyCaps words apart, so
+"RandomKwikiPage" becomes "Random Kwiki Page".
+
+The one exception is that the Kwiki "HomePage" becomes the Silki "Front Page".
+
+You can use a converter subclass to add more intelligence to this process.
+
+Also, you'll need to manually delete your wiki's front page (for now).
+
+=head1 DUMPING TITLES AND USERS
+
+The F<kwiki2silki> script can dump all titles and users from your kwiki
+install:
+
+  kwiki2silki --wiki           'Silki Wiki Title'   \
+              --kwiki-root     /path/to/kwiki       \
+              --dump-page-titles                    \
+              --dump-usernames
+
+This is very handy in helping you come up with a user map.
+
+=cut
