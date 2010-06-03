@@ -658,10 +658,14 @@ The converter drops some database triggers in order to speed things up, and
 restores them at the end of the conversion. If the conversion stops mid-stream
 for any reason, your database will be in a very wonky state.
 
-I highly recommend taking a backup of your Silki database (with F<pg_dump)
-before converting. I also recommend disabling the web UI during the
-conversion. That way you can safely restore from the backup if the conversion
-causes problems.
+The converter assumes that the wiki you're writing to is effectively
+empty. Don't try to convert into an already-in-use wiki!
+
+If you have other wikis which are in use, make sure to backup your database
+with F<pg_dump>. Also, shut down the web UI during the conversion, or else
+other wikis could end up corrupted because of the missing triggers.
+
+Basically, this software is rough, and could mess you up. Be careful.
 
 =head1 USER MAP FILE
 
