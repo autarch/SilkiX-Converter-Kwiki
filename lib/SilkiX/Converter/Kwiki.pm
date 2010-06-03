@@ -669,9 +669,16 @@ other wikis could end up corrupted because of the missing triggers.
 
 Basically, this software is rough, and could mess you up. Be careful.
 
-=head1 KWIKI ASSUMPTIONS
+=head1 KWIKI PLUGINS
 
-This module assumes that your Kwiki install has certain plugins.
+This module assumes that your Kwiki install has certain plugins. It assumes
+that your Kwiki install has one of the archive plugins installed, though it
+doesn't matter which one.
+
+You also will need the L<Kwiki::Attachments> module installed. This may fail
+tests, but just force it (sigh). However, if your kwiki install does not load
+the attachments plugin, that's ok. If it does, then this converter will
+convert attachments too.
 
 =head1 USER MAP FILE
 
