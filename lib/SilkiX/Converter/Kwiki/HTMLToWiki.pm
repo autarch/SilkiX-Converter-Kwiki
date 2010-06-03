@@ -1,4 +1,4 @@
-package SilkiX::converter::Kwiki::HTMLToWiki;
+package SilkiX::Converter::Kwiki::HTMLToWiki;
 
 use strict;
 use warnings;
