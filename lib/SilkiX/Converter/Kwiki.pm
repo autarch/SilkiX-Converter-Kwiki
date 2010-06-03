@@ -444,6 +444,8 @@ sub _convert_attachments {
     my $page   = shift;
     my $s_page = shift;
 
+    return unless $self->_kwiki()->hub()->can('attachments');
+
     return
         unless $self->_kwiki()->hub()->attachments()
             ->get_attachments( $page->id() );
@@ -666,6 +668,10 @@ with F<pg_dump>. Also, shut down the web UI during the conversion, or else
 other wikis could end up corrupted because of the missing triggers.
 
 Basically, this software is rough, and could mess you up. Be careful.
+
+=head1 KWIKI ASSUMPTIONS
+
+This module assumes that your Kwiki install has certain plugins.
 
 =head1 USER MAP FILE
 
