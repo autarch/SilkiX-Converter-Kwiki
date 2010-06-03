@@ -6,7 +6,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 
-my $class = $ENV{SILKIX_CONVERTER} || 'SilkiX::Convert::Kwiki';
+my $class = $ENV{SILKIX_CONVERTER} || 'SilkiX::Converter::Kwiki';
 eval "use $class";
 die $@ if $@;
 

@@ -1,4 +1,4 @@
-package SilkiX::Convert::Kwiki;
+package SilkiX::Converter::Kwiki;
 
 use strict;
 use warnings;
@@ -16,7 +16,7 @@ use Kwiki              ();
 use Kwiki::Attachments ();
 use Path::Class qw( dir file );
 use Scalar::Util qw( blessed );
-use SilkiX::Convert::Kwiki::HTMLToWiki;
+use SilkiX::converter::Kwiki::HTMLToWiki;
 use Silki::Schema::File;
 use Silki::Schema::Page;
 use Silki::Schema::User;
@@ -536,7 +536,7 @@ sub _build_formatter {
         return $self->_convert_wiki_link( $_[0] );
     };
 
-    return SilkiX::Convert::Kwiki::HTMLToWiki->new(
+    return SilkiX::converter::Kwiki::HTMLToWiki->new(
         wiki            => $self->_wiki(),
         wiki_link_fixer => $wiki_link_fixer,
     );

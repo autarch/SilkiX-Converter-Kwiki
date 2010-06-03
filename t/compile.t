@@ -3,6 +3,6 @@ use warnings;
 
 use Test::More;
 
-use_ok('SilkiX::Convert::Kwiki');
+use_ok('SilkiX::converter::Kwiki');
 
 done_testing();
