@@ -652,6 +652,17 @@ be used to do the conversion. This lets you create a custom subclass, which
 can be useful, especially when it comes to default values for users and for
 mapping page titles from Kwiki to Silki.
 
+=head1 WARNING
+
+The converter drops some database triggers in order to speed things up, and
+restores them at the end of the conversion. If the conversion stops mid-stream
+for any reason, your database will be in a very wonky state.
+
+I highly recommend taking a backup of your Silki database (with F<pg_dump)
+before converting. I also recommend disabling the web UI during the
+conversion. That way you can safely restore from the backup if the conversion
+causes problems.
+
 =head1 USER MAP FILE
 
 By default, the converter does a dumb mapping of kwiki usernames to Silki
