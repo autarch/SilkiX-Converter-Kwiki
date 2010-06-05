@@ -607,7 +607,8 @@ sub _debug {
 {
     use Spoon::Hub;
 
-    package Spoon::Hub;
+    package
+        Spoon::Hub;
 
     no warnings 'redefine';
 
