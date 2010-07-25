@@ -177,32 +177,38 @@ sub run {
 
     $self->_disable_pg_triggers();
 
-    for my $page (
-        map  { $_->[1] }
-        sort { $a->[0] <=> $b->[0] }
-        map {
-            my $order = $_->title() eq 'HomePage' ? 0 : 1;
-            [ $order, $_ ]
-        } $self->_kwiki()->hub()->pages()->all()
-        ) {
+    eval {
+        for my $page (
+            map  { $_->[1] }
+            sort { $a->[0] <=> $b->[0] }
+            map {
+                my $order = $_->title() eq 'HomePage' ? 0 : 1;
+                [ $order, $_ ]
+            } $self->_kwiki()->hub()->pages()->all()
+            ) {
 
+            $self->_convert_page($page);
+        }
 
-        $self->_convert_page($page);
-    }
+        $self->_enable_pg_triggers();
 
-    $self->_enable_pg_triggers();
+        $self->_rebuild_searchable_text();
 
-    $self->_rebuild_searchable_text();
+        for my $user (
+            grep { !$_->is_disabled() }
+            grep { blessed $_} values %{ $self->_user_map() }
+            ) {
 
-    for my $user (
-        grep { !$_->is_disabled() }
-        grep {blessed $_} values %{ $self->_user_map() }
-        ) {
+            $self->_wiki->add_user(
+                user => $user,
+                role => Silki::Schema::Role->Member(),
+            );
+        }
+    };
 
-        $self->_wiki->add_user(
-            user => $user,
-            role => Silki::Schema::Role->Member(),
-        );
+    if ( my $e = $@ ) {
+        $self->_enable_pg_triggers();
+        die $e;
     }
 }
 
@@ -556,8 +562,8 @@ sub _disable_pg_triggers {
 
     my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 
-    $dbh->do( q{DROP TRIGGER ts_text_sync ON "Page"} );
-    $dbh->do( q{DROP TRIGGER page_revision_ts_text_sync ON "PageRevision"} );
+    $dbh->do( q{ALTER TABLE "Page" DISABLE TRIGGER USER} );
+    $dbh->do( q{ALTER TABLE "PageRevision" DISABLE TRIGGER USER} );
 }
 
 sub _enable_pg_triggers {
@@ -565,9 +571,8 @@ sub _enable_pg_triggers {
 
     my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 
-    $dbh->do( q{CREATE TRIGGER ts_text_sync BEFORE UPDATE ON "Page" FOR EACH ROW EXECUTE PROCEDURE page_tsvector_trigger()} );
-
-    $dbh->do( q{CREATE TRIGGER page_revision_ts_text_sync AFTER INSERT ON "PageRevision" FOR EACH ROW EXECUTE PROCEDURE page_revision_tsvector_trigger()} );
+    $dbh->do( q{ALTER TABLE "Page" ENABLE TRIGGER USER} );
+    $dbh->do( q{ALTER TABLE "PageRevision" ENABLE TRIGGER USER} );
 }
 
 sub _rebuild_searchable_text {
@@ -657,9 +662,9 @@ mapping page titles from Kwiki to Silki.
 
 =head1 WARNING
 
-The converter drops some database triggers in order to speed things up, and
-restores them at the end of the conversion. If the conversion stops mid-stream
-for any reason, your database will be in a very wonky state.
+The converter disables some database triggers in order to speed things up, and
+restores them at the end of the conversion. It attempts to restore them if the
+process fails mid-stream, but this is software, and software has bugs.
 
 The converter assumes that the wiki you're writing to is effectively
 empty. Don't try to convert into an already-in-use wiki!
