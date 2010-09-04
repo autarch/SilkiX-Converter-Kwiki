@@ -591,12 +591,13 @@ SELECT pages.page_id,
                     FROM "PageRevision"
                    WHERE page_id = p.page_id )
             AND p.page_id = pr.page_id
+            AND p.wiki_id = ?
        ) AS pages;
 EOF
 
     my $dbh = Silki::Schema->DBIManager()->default_source()->dbh();
 
-    $dbh->do($sql);
+    $dbh->do( $sql, {}, $self->_wiki()->wiki_id() );
 }
 
 sub _debug {
