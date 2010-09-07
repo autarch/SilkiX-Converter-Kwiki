@@ -119,3 +119,5 @@ sub _page_link {
 __PACKAGE__->meta()->make_immutable();
 
 1;
+
+# ABSTRACT: Custom HTML to wiki conversion to do conversion from Kwiki
