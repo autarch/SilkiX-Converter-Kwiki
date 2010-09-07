@@ -668,18 +668,19 @@ be used to do the conversion. This lets you create a custom subclass, which
 can be useful, especially when it comes to default values for users and for
 mapping page titles from Kwiki to Silki.
 
-=head1 WARNING
+=head1 WARNINGS
 
-The converter disables some database triggers in order to speed things up, and
-restores them at the end of the conversion. It attempts to restore them if the
-process fails mid-stream, but this is software, and software has bugs.
-
-The converter assumes that the wiki you're writing to is effectively
-empty. Don't try to convert into an already-in-use wiki!
+If you pass the C<--fast> option, the converter disables some database
+triggers in order to speed things up, and restores them at the end of the
+conversion. It attempts to restore them if the process fails mid-stream, but
+this is software, and software has bugs.
 
 If you have other wikis which are in use, make sure to backup your database
 with F<pg_dump>. Also, shut down the web UI during the conversion, or else
 other wikis could end up corrupted because of the missing triggers.
+
+The converter assumes that the wiki you're writing to is effectively
+empty. Don't try to convert into an already-in-use wiki!
 
 Basically, this software is rough, and could mess you up. Be careful.
 
