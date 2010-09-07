@@ -649,7 +649,8 @@ __END__
   kwiki2silki --wiki           'Silki Wiki Title'   \
               --kwiki-root     /path/to/kwiki       \
               --user-map-file  /path/to/map.json    \
-              --default-user   DefaultNameFromKwiki
+              --default-user   DefaultNameFromKwiki \
+              --fast
 
   SILKIX_CONVERTER=MyCustomConversionSubclass \
     kwiki2silki --wiki           'Silki Wiki Title'   \
