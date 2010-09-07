@@ -52,6 +52,12 @@ has wiki_name => (
     required => 1,
 );
 
+has fast => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
+);
+
 has _wiki => (
     is  => 'rw',
     isa => 'Silki::Schema::Wiki',
@@ -175,7 +181,7 @@ sub run {
 
     exit if $self->dump_page_titles() || $self->dump_usernames();
 
-    $self->_disable_pg_triggers();
+    $self->_disable_pg_triggers() if $self->fast();
 
     eval {
         for my $page (
@@ -190,9 +196,9 @@ sub run {
             $self->_convert_page($page);
         }
 
-        $self->_enable_pg_triggers();
+        $self->_enable_pg_triggers() if $self->fast();
 
-        $self->_rebuild_searchable_text();
+        $self->_rebuild_searchable_text() if $self->fast();
 
         for my $user (
             grep { !$_->is_disabled() }
